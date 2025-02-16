@@ -1,0 +1,37 @@
+Backend (FastAPI) Dependencies
+Run:
+
+pip install fastapi uvicorn google-generativeai pydantic sqlalchemy psycopg2-binary mysql-connector-python python-multipart
+
+Frontend (React) Dependencies
+
+npm install axios react-router-dom tailwindcss @mui/material @emotion/react @emotion/styled
+
+
+Database Setup
+For PostgreSQL (if using PostgreSQL):
+
+sudo apt update && sudo apt install postgresql postgresql-contrib  # Linux  
+brew install postgresql  # Mac  
+sql
+
+CREATE DATABASE text_enhancer;
+
+For MySQL (if using MySQL):
+
+sudo apt update && sudo apt install mysql-server  # Linux  
+brew install mysql  # Mac  
+sql
+
+CREATE DATABASE text_enhancer;
+
+
+✅ Running Everything
+
+Start Backend
+
+uvicorn main:app --reload
+
+Start Frontend
+
+npm start
