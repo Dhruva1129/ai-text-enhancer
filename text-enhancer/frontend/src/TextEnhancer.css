@@ -26,7 +26,7 @@ h1 {
 }
 
 textarea {
-    width: 100%;
+    width: 94%;
     height: 100px;
     padding: 10px;
     border: 1px solid #ccc;
@@ -44,21 +44,51 @@ select {
     font-size: 14px;
 }
 
-button {
+.tone-buttons{
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+    gap: 10px;
+}
+
+.tone-buttons button {
     width: 100%;
     padding: 10px;
     margin-top: 15px;
-    border: none;
-    background-color: #007bff;
-    color: white;
+    background-color: #ffffff;
+    color: #000000;
     font-size: 16px;
     cursor: pointer;
     border-radius: 5px;
-    transition: background 0.3s ease;
+    transition: background 0.3sease;
+    border: 1px solid black;
 }
 
-button:hover {
-    background-color: #0056b3;
+.tone-buttons button:hover {
+    background-color: #b9b9b9;
+    transition: 0.5s;
+}
+
+.tone-buttons button.active {
+    background-color: #b9b9b9;
+    color: rgb(0, 0, 0);
+}
+
+.enhace-btn {
+    background-color: #2a2fb0;
+    color: white;
+    border: none;
+    width: 100%;
+    padding: 10px;
+    margin-top: 15px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background 0.3sease;
+}
+
+.enhace-btn:hover {
+    background-color: #1a1f80;
 }
 
 h2 {
@@ -73,4 +103,81 @@ p {
     border-radius: 5px;
     min-height: 50px;
     font-size: 16px;
+}
+
+@media (max-width: 480px) {
+    .container {
+        width: 90%;
+        padding: 15px;
+    }
+
+    textarea {
+        width: 90%;
+        height: 80px;
+        font-size: 12px;
+    }
+
+    .tone-buttons {
+        flex-direction: row;
+        gap: 5px;
+    }
+
+    .tone-buttons button {
+        width: 100%;
+        padding: 8px;
+        font-size: 10px;
+    }
+
+    .enhace-btn {
+        font-size: 14px;
+        padding: 8px;
+    }
+
+    h1 {
+        font-size: 18px;
+    }
+
+    h2 {
+        font-size: 16px;
+    }
+
+    p {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        width: 80%;
+    }
+
+    textarea {
+        width: 90%;
+        font-size: 13px;
+    }
+
+    .tone-buttons {
+        flex-direction: row;
+        gap: 8px;
+    }
+
+    .tone-buttons button {
+        font-size: 10px;
+    }
+
+    .enhace-btn {
+        font-size: 15px;
+    }
+
+    h1 {
+        font-size: 20px;
+    }
+
+    h2 {
+        font-size: 17px;
+    }
+
+    p {
+        font-size: 15px;
+    }
 }
