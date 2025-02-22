@@ -3,6 +3,11 @@ Run:
 
 pip install fastapi uvicorn google-generativeai pydantic sqlalchemy psycopg2-binary mysql-connector-python python-multipart
 
+pip install gtts
+
+pip install googletrans==4.0.0-rc1
+
+
 Frontend (React) Dependencies
 
 npm install axios react-router-dom tailwindcss @mui/material @emotion/react @emotion/styled
