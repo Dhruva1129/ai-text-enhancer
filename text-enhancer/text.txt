@@ -1,16 +1,34 @@
 Backend (FastAPI) Dependencies
 Run:
 
+python -m venv venv
+
 pip install fastapi uvicorn google-generativeai pydantic sqlalchemy psycopg2-binary mysql-connector-python python-multipart
 
 pip install gtts
 
 pip install googletrans==4.0.0-rc1
 
+pip install deep_translator
+
+pip install --upgrade google-generativeai
 
 Frontend (React) Dependencies
 
 npm install axios react-router-dom tailwindcss @mui/material @emotion/react @emotion/styled
+
+
+✅ Running Everything
+
+Start Backend
+
+uvicorn main:app --reload
+
+Start Frontend
+
+npm start
+
+
 
 
 Database Setup
@@ -31,12 +49,35 @@ sql
 CREATE DATABASE text_enhancer;
 
 
-✅ Running Everything
 
-Start Backend
+
+
+✅ Windows (Command Prompt)
+Open Command Prompt (CMD).
+set GOOGLE_API_KEY="your-api-key-here"
+Search "Environment Variables" in Windows.
+Click "Edit the system environment variables".
+Click "Environment Variables".
+Under "System variables", click "New".
+Set Variable Name = GOOGLE_API_KEY
+Set Variable Value = "your-api-key-here"
+Click OK.
+
+✅ Windows (PowerShell)
+
+Open PowerShell.
+Run: powershell
+
+$env:GOOGLE_API_KEY="your-api-key-here"
+
+To make it permanent, add it to PowerShell profile:
+powershell
+
+[System.Environment]::SetEnvironmentVariable("GOOGLE_API_KEY", "your-api-key-here", "User")
+
+3️⃣ Restart Your Terminal & Run FastAPI Backend
+Once you've set the environment variable, restart your terminal so the changes take effect.
+
+Now, run your FastAPI backend:
 
 uvicorn main:app --reload
-
-Start Frontend
-
-npm start
