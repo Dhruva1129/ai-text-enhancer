@@ -20,17 +20,41 @@ const TextEnhancer = () => {
         { code: "mr", name: "Marathi" },
     ];
 
+    // const handleEnhance = async () => {
+    //     try {
+    //         setLoading(true);
+    //         const response = await axios.post("http://127.0.0.1:8000/enhance", { text, tone });
+    //         setEnhancedText(response.data.enhanced_text);
+    //     } catch (error) {
+    //         console.error("Error enhancing text:", error);
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
+
     const handleEnhance = async () => {
+        if (!text.trim()) {
+            alert("Please enter text before enhancing.");
+            return;
+        }
+    
         try {
             setLoading(true);
             const response = await axios.post("http://127.0.0.1:8000/enhance", { text, tone });
-            setEnhancedText(response.data.enhanced_text);
+    
+            if (response.data && response.data.enhanced_text) {
+                setEnhancedText(response.data.enhanced_text);
+            } else {
+                throw new Error("Unexpected API response format.");
+            }
         } catch (error) {
             console.error("Error enhancing text:", error);
+            alert(error.response?.data?.detail || "An error occurred while enhancing the text.");
         } finally {
             setLoading(false);
         }
     };
+    
 
     const handleTranslate = async () => {
         try {
