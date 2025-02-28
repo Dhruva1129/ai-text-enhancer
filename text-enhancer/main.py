@@ -7,16 +7,33 @@ from googletrans import Translator
 from gtts import gTTS
 from fastapi.responses import FileResponse
 
+from deep_translator import GoogleTranslator
+
+
+# Load API key from environment variable
+GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
+
+# Raise an error if API key is missing
+if not GOOGLE_API_KEY:
+    raise ValueError("Missing Google API Key! Set GOOGLE_API_KEY as an environment variable.")
+
+# Configure the Gemini AI model
+genai.configure(api_key=GOOGLE_API_KEY)
+
+# GOOGLE_API_KEY="AIzaSyALZKlYvpfm9tCzpcvOf11pLhW6kpPc1wY"
+
 # Configure Google Gemini API Key
-genai.configure(api_key="AIzaSyALZKlYvpfm9tCzpcvOf11pLhW6kpPc1wY")
-model = genai.GenerativeModel("gemini-pro")
+# genai.configure(api_key="AIzaSyALZKlYvpfm9tCzpcvOf11pLhW6kpPc1wY")
+model = genai.GenerativeModel("gemini-1.5-pro-latest")
+
 
 # Initialize FastAPI
 app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3001"],  # React frontend
+    allow_origins=["http://localhost:3000"],  # React frontend
+    # allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -40,31 +57,79 @@ translator = Translator()
 @app.post("/enhance")
 async def enhance_text(request: TextEnhancementRequest):
     try:
-        prompt = f"Enhance this text in a single line without using complex words in a '{request.tone}' tone while fixing grammar in a simple understandable language : '{request.text}'"
+        if not request.text.strip():
+            raise HTTPException(status_code=400, detail="Text input cannot be empty.")
+
+        prompt = f"Enhance this text in a single line without using complex words in a '{request.tone}' tone while fixing grammar in a simple understandable language: '{request.text}'"
         response = model.generate_content(prompt)
-        return {"enhanced_text": response.text}
+
+        if not hasattr(response, "text") or not response.text.strip():
+            raise HTTPException(status_code=500, detail="Failed to generate enhanced text.")
+
+        return {"enhanced_text": response.text.strip()}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+# @app.post("/enhance")
+# async def enhance_text(request: TextEnhancementRequest):
+#     try:
+#         prompt = f"Enhance this text in a single line without using complex words in a '{request.tone}' tone while fixing grammar in a simple understandable language : '{request.text}'"
+#         response = model.generate_content(prompt)
+#         return {"enhanced_text": response.text}
+#     except Exception as e:
+#         raise HTTPException(status_code=500, detail=str(e))
+
+
 
 @app.post("/translate")
 async def translate_text(request: TranslationRequest):
     try:
-        translated = translator.translate(request.text, dest=request.language)
-        return {"translated_text": translated.text}
+        translated = GoogleTranslator(source="auto", target=request.language).translate(request.text)
+        return {"translated_text": translated}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=f"Translation error: {str(e)}")
+
+# @app.post("/translate")
+# async def translate_text(request: TranslationRequest):
+#     try:
+#         translated = translator.translate(request.text, dest=request.language)
+#         return {"translated_text": translated.text}
+#     except Exception as e:
+#         raise HTTPException(status_code=500, detail=str(e))
+
+# @app.post("/speak")
+# async def text_to_speech(request: TextToSpeechRequest):
+#     try:
+#         tts = gTTS(text=request.text, lang=request.language)
+#         file_path = "speech.mp3"
+#         tts.save(file_path)
+#         return FileResponse(file_path, media_type="audio/mpeg", filename="speech.mp3")
+#     except Exception as e:
+#         raise HTTPException(status_code=500, detail=str(e))
+
+import uuid
 
 @app.post("/speak")
 async def text_to_speech(request: TextToSpeechRequest):
     try:
+        filename = f"speech_{uuid.uuid4().hex}.mp3"
         tts = gTTS(text=request.text, lang=request.language)
-        file_path = "speech.mp3"
-        tts.save(file_path)
-        return FileResponse(file_path, media_type="audio/mpeg", filename="speech.mp3")
+        tts.save(filename)
+
+        response = FileResponse(filename, media_type="audio/mpeg", filename="speech.mp3")
+
+        # Delete the file after sending response
+        @response.call_on_close
+        def cleanup():
+            os.remove(filename)
+
+        return response
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 
+print(f"Google API Key Loaded: {GOOGLE_API_KEY[:5]}******")
 
 
 
