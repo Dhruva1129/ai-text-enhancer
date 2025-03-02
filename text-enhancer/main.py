@@ -98,35 +98,35 @@ async def translate_text(request: TranslationRequest):
 #     except Exception as e:
 #         raise HTTPException(status_code=500, detail=str(e))
 
-# @app.post("/speak")
-# async def text_to_speech(request: TextToSpeechRequest):
-#     try:
-#         tts = gTTS(text=request.text, lang=request.language)
-#         file_path = "speech.mp3"
-#         tts.save(file_path)
-#         return FileResponse(file_path, media_type="audio/mpeg", filename="speech.mp3")
-#     except Exception as e:
-#         raise HTTPException(status_code=500, detail=str(e))
-
-import uuid
-
 @app.post("/speak")
 async def text_to_speech(request: TextToSpeechRequest):
     try:
-        filename = f"speech_{uuid.uuid4().hex}.mp3"
         tts = gTTS(text=request.text, lang=request.language)
-        tts.save(filename)
-
-        response = FileResponse(filename, media_type="audio/mpeg", filename="speech.mp3")
-
-        # Delete the file after sending response
-        @response.call_on_close
-        def cleanup():
-            os.remove(filename)
-
-        return response
+        file_path = "speech.mp3"
+        tts.save(file_path)
+        return FileResponse(file_path, media_type="audio/mpeg", filename="speech.mp3")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+# import uuid
+
+# @app.post("/speak")
+# async def text_to_speech(request: TextToSpeechRequest):
+#     try:
+#         filename = f"speech_{uuid.uuid4().hex}.mp3"
+#         tts = gTTS(text=request.text, lang=request.language)
+#         tts.save(filename)
+
+#         response = FileResponse(filename, media_type="audio/mpeg", filename="speech.mp3")
+
+#         # Delete the file after sending response
+#         @response.call_on_close
+#         def cleanup():
+#             os.remove(filename)
+
+#         return response
+#     except Exception as e:
+#         raise HTTPException(status_code=500, detail=str(e))
 
 
 print(f"Google API Key Loaded: {GOOGLE_API_KEY[:5]}******")
