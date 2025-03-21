@@ -18,6 +18,11 @@ pip install --upgrade google-generativeai
 
 pip install Flask gtts SpeechRecognition pydub
 
+pip install requests
+
+pip install google-cloud-vision python-multipart
+
+
 
 Frontend (React) Dependencies
 
