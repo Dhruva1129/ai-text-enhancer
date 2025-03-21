@@ -6,8 +6,24 @@ from fastapi.middleware.cors import CORSMiddleware
 from googletrans import Translator
 from gtts import gTTS
 from fastapi.responses import FileResponse
+from fastapi import UploadFile, File
 
 from deep_translator import GoogleTranslator
+
+from image_enha import router as image_enhancer_router
+
+
+# import os
+# os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "google-vision-key.json"
+
+
+# import requests
+# from fastapi import UploadFile, File
+
+# from fastapi import FastAPI, UploadFile, File, HTTPException
+# import requests
+# from typing import Optional
+
 
 
 # Load API key from environment variable
@@ -38,6 +54,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.include_router(image_enhancer_router, prefix="/image")
 
 # Define request models
 class TextEnhancementRequest(BaseModel):
@@ -107,6 +125,29 @@ async def text_to_speech(request: TextToSpeechRequest):
         return FileResponse(file_path, media_type="audio/mpeg", filename="speech.mp3")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    
+OCR_API_KEY = "K82850298288957"  # You can register for a free key at https://ocr.space/OCRAPI
+
+@app.post("/image-to-enhanced-text")
+async def image_to_enhanced_text(file: UploadFile = File(...)):
+    try:
+        image_bytes = await file.read()
+        response = requests.post(
+            "https://api.ocr.space/parse/image",
+            files={"filename": image_bytes},
+            data={"apikey": OCR_API_KEY, "language": "eng"},
+        )
+        result = response.json()
+        extracted_text = result["ParsedResults"][0]["ParsedText"]
+
+        # Enhance the extracted text using Gemini
+        prompt = f"Enhance this handwritten extracted text with correct grammar and clarity: {extracted_text}"
+        gemini_response = model.generate_content(prompt)
+
+        return {"enhanced_text": gemini_response.text, "raw_text": extracted_text}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 
 # import uuid
 
